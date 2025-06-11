@@ -384,6 +384,13 @@ def regenerate_huffman_tree_from_codes(huffcodes):
     return root_node
 
 
+def write_file(stored_contents,file_name):
+    file_object =  open(file_name.split(".")[0] + ".txt",'w')
+    for i in stored_contents:
+        file_object.write(i)
+        file_object.write('\n')
+    file_object.close()
+
 
 
 
@@ -395,9 +402,10 @@ while True:
     elif query == "d":
         file_name = input("Enter the name of the .bin file you would like to decompress: ") + ".bin"
         stored_contents = decompress_file(file_name)
-
-        print("Contents of",file_name,":")
-        for i in stored_contents:print(i)
+        #print("Contents of",file_name,":")
+        write_file(stored_contents,file_name)
+        
+        
     elif query == "exit":break
 
 
