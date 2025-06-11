@@ -7,3 +7,8 @@ How to use:
 Run the file in your terminal. Have a .txt file in the same directory as huffman.py.
 
 Follow the instructions laid out by the response. Any files you want to encode or decode must be have their full name case-sensitive filename typed out excluding the .txt or .bin extension.
+
+I have some .bin files for you to decrypt on your own.
+
+
+My custom script has a compression rate of approximatly 42%. Meaning it reduces a .txt file to around 58% of its original size.
