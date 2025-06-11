@@ -1,2 +1,9 @@
 # Huffman-Compressor
 It utilizes huffman encoding to compress a .txt file into a smaller binary file. Current capabilities are limited to only .txt files for now.
+
+
+How to use:
+
+Run the file in your terminal. Have a .txt file in the same directory as huffman.py.
+
+Follow the instructions laid out by the response. Any files you want to encode or decode must be have their full name case-sensitive filename typed out excluding the .txt or .bin extension.
