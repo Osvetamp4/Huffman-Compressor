@@ -44,7 +44,9 @@ def LZ77_encoding(input_string):
         search_buffer+=lookahead_buffer[:match_length]
 
         if match_length <= 2:search_buffer_list.append(lookahead_buffer[:match_length])
-        else:search_buffer_list.append(Pointer(distance,match_length))
+        else:
+            search_buffer_list.append(254 + match_length)
+            search_buffer_list.append(distance - 1)
         
         lookahead_buffer = lookahead_buffer[match_length:]
 
@@ -55,12 +57,11 @@ def LZ77_encoding(input_string):
         else: numbered_list.append(search_buffer_list[i])
 
 
-    return search_buffer_list
+    return numbered_list
         
 
 x = LZ77_encoding("testing testing 123 abc just xyz.")
 for i in x:
     if type(i) == Pointer: i.printout()
     else:print(i,end=" ")
-
 
