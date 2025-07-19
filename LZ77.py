@@ -38,6 +38,7 @@ class Deflate:
         self.huffman_tree = None
         self.status = Deflate.State.UNENCODED
         self.nade_list = []
+        self.huffman_codes = dict()
     
     @staticmethod
     def string_match_up(string1,string2):
@@ -91,6 +92,7 @@ class Deflate:
         
         self.status = Deflate.State.LZ77ENCODED
     
+    #determines the frequency of the numbers and creates nades list with probabilities
     def huffman_probabilities(self):
         huffman_frequency = dict()
         self.current_list.append(256) #EOD token
@@ -106,11 +108,11 @@ class Deflate:
             nades.append(Nade(name=char, value=freq))
         self.nade_list = nades
     
-    def huffman_tree(self):
+    def create_huffman_tree(self):
         #this takes in a list of Nade objects and builds a binary huffman tree
         self.nade_list.sort(key=lambda x: x.value)
 
-        while len(self.current_list) > 1:
+        while len(self.nade_list) > 1:
             left = self.nade_list.pop(0)
             right = self.nade_list.pop(0)
             new_node = Nade(name=left.name + right.name,  value=left.value + right.value)
@@ -121,6 +123,16 @@ class Deflate:
             self.nade_list.append(new_node)
             self.nade_list.sort(key=lambda x: x.value)
         self.huffman_tree = self.nade_list[0]
+    
+    def transform_to_huffman_codes(self):
+        self.huffman_codes
+        queue = []
+        visited = []
+        queue.append(self.huffman_tree)
+        while len(queue) > 0:
+            current_nade = queue.pop(0)
+            current_nade.left.append()
+            current_nade.right.append()
     
     def encode_LZ77_to_huffman(self):
         pass
@@ -157,9 +169,10 @@ x.LZ77_encoding()
 print(x.current_list)
 print(x.status)
 x.huffman_probabilities()
-print(x.huffman_codes)
+print(x.nade_list)
 
+x.create_huffman_tree()
 
-        
+print(x.huffman_tree)
 
-
+x.huffman_tree.left.left.left.print_out()
