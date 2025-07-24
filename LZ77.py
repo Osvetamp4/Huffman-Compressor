@@ -38,6 +38,7 @@ class Deflate:
         self.huffman_tree = None
         self.status = Deflate.State.UNENCODED
         self.nade_list = []
+        self.distance_code_nade_list = []
         self.huffman_codes = dict()
     
     @staticmethod
@@ -96,9 +97,18 @@ class Deflate:
     #determines the frequency of the numbers and creates nades list with probabilities
     def huffman_probabilities(self):
         huffman_frequency = dict()
+        distance_frequency = dict()
         self.raw_number_list.append(256) #EOD token
+        is_distance_code = False
         for i in self.raw_number_list:
-            if i in huffman_frequency:
+            if i > 255: is_distance_code == True
+            elif is_distance_code == True:
+                is_distance_code = False
+                if i in distance_frequency:
+                    distance_frequency[i] += 1
+                else:
+                    distance_frequency[i] = 1
+            elif i in huffman_frequency:
                 huffman_frequency[i] += 1
             else:
                 huffman_frequency[i] = 1
@@ -108,6 +118,11 @@ class Deflate:
         for char, freq in huffman_frequency.items():
             nades.append(Nade(name=char, value=freq))
         self.nade_list = nades
+
+        distance_nades = []
+        for char, freq in distance_frequency.items():
+            distance_nades.append(Nade(name=char,value=freq))
+        self.distance_code_nade_list = distance_nades
         print(huffman_frequency)
     
     def create_huffman_tree(self):
@@ -173,9 +188,9 @@ x.LZ77_encoding()
 
 x.huffman_probabilities()
 
-for i in x.nade_list:
-    print(i.name,end=' ')
-print()
+# for i in x.nade_list:
+#     print(i.name,end=' ')
+# print()
 x.create_huffman_tree()
 
 
@@ -183,8 +198,8 @@ x.create_huffman_tree()
 x.transform_to_huffman_codes()
 
 
-print(x.huffman_codes)
-print(x.raw_number_list)
+# print(x.huffman_codes)
+# print(x.raw_number_list)
 
 # final_node = x.huffman_tree.left.right.right
 # final_node.print_out()
