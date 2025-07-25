@@ -100,18 +100,15 @@ class Deflate:
         distance_frequency = dict()
         self.raw_number_list.append(256) #EOD token
         is_distance_code = False
+
+        #If number > 255 -> it is a marker number -> we still add to huffman frequency -> but next number we put into distance_frequency instead
         for i in self.raw_number_list:
-            if i > 255: is_distance_code == True
+            if i > 255: is_distance_code = True
             elif is_distance_code == True:
                 is_distance_code = False
-                if i in distance_frequency:
-                    distance_frequency[i] += 1
-                else:
-                    distance_frequency[i] = 1
-            elif i in huffman_frequency:
-                huffman_frequency[i] += 1
-            else:
-                huffman_frequency[i] = 1
+                distance_frequency[i] = distance_frequency.get(i,0) + 1
+                continue
+            huffman_frequency[i] = huffman_frequency.get(i,0) + 1
         
         # Create a list of Nade objects with their probabilities
         nades = []
@@ -124,24 +121,28 @@ class Deflate:
             distance_nades.append(Nade(name=char,value=freq))
         self.distance_code_nade_list = distance_nades
         print(huffman_frequency)
+        print(distance_frequency)
+        
     
-    def create_huffman_tree(self):
+    # reformat this so that it just returns the huffman tree instead. Make it more modular
+    def create_huffman_tree(self,given_list):
         #this takes in a list of Nade objects and builds a binary huffman tree
-        self.nade_list.sort(key=lambda x: x.value)
+        given_list.sort(key=lambda x: x.value)
 
-        while len(self.nade_list) > 1:
-            left = self.nade_list.pop(0)
-            right = self.nade_list.pop(0)
+        while len(given_list) > 1:
+            left = given_list.pop(0)
+            right = given_list.pop(0)
             new_node = Nade(name=left.name + right.name,  value=left.value + right.value)
             new_node.left = left
             new_node.right = right
             left.parent = new_node
             right.parent = new_node
-            self.nade_list.append(new_node)
-            self.nade_list.sort(key=lambda x: x.value)
-        self.huffman_tree = self.nade_list[0]
+            given_list.append(new_node)
+            given_list.sort(key=lambda x: x.value)
+        return given_list[0]
+        # self.huffman_tree = given_list[0]
     
-    def transform_to_huffman_codes(self):
+    def transform_to_huffman_codes(self): #figure out a way to do this with only one singular nade, add an edge case.
         queue = []
         leaf_list = []
         queue.append(self.huffman_tree)
@@ -189,7 +190,11 @@ x.LZ77_encoding()
 x.huffman_probabilities()
 
 # for i in x.nade_list:
-#     print(i.name,end=' ')
+#     print("{",i.name,i.value,"}",end=' ')
+# print()
+
+# for i in x.distance_code_nade_list:
+#     print("{",i.name,i.value,"}",end=' ')
 # print()
 x.create_huffman_tree()
 
